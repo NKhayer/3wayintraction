@@ -1,0 +1,19 @@
+library(WGCNA)
+library(fastLiquidAssociation)
+allowWGCNAThreads()
+eset<-read.table("transfA.txt", header=T, sep="\t")
+row.names(eset) <-eset[,1]
+eset <-eset[,-1]
+data<-t(eset)
+data <- data[,1:20527]
+result <- fastMLA(data=data,topn=300000,nvec=1:38,rvalue=0.5,cut=3,threads=detectCores())
+CNMcalc <- mass.CNM(data=data, GLA.mat=result, nback= 200000)
+finalres<-CNMcalc$"top p-values"
+write.csv(finalres,file="resfastLA_Alzh.csv")
+boot <- CNMcalc$"bootstrap triplets"
+write.csv(boot,file=" boot.csv")
+clust <- makeCluster(32)
+GLAeasy <- fastboots.GLA(boot, data=data, clust=clust, boots=30, perm=100, cut=3)
+stopCluster(clust)
+closeAllConnections()
+write.csv(GLAeasy,file=" resfasLAboot.csv")
