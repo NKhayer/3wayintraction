@@ -1,0 +1,18 @@
+eset<-read.table("eset.txt", header=T, sep="\t")
+eset<-na.omit(eset)
+row.names(eset)<-eset[,1]
+eset<-eset[,-1]
+#convert eset to expressionset
+library(Biobase)
+eset_anot_matrix<- as.matrix(eset)
+eset_EXP<-ExpressionSet(assayData=eset_anot_matrix)
+#attach annotation data to this expressionSet
+library(mogene11sttranscriptcluster.db)
+annotation(eset_EXP)<-"mogene11sttranscriptcluster.db"
+# reduce data with genefilter
+library("genefilter")
+filtered<-nsFilter(eset_EXP, require.entrez=TRUE, remove.dup.Entrez=TRUE,var.filter=FALSE)
+dim(filtered$eset)
+eset_filtered<-filtered$eset
+eset_filtered<-exprs(eset_filtered)
+write.table(eset_filtered,file="eset_f.txt",sep="\t")
