@@ -1,0 +1,11 @@
+library(CTT)
+eset<-read.table("97.txt", header=T, sep="\t")
+row.names(eset) <-eset[,1]
+eset <-eset[,-1]
+data <- as.matrix(eset)
+nrt<-nrow(data)
+nc<- ncol(data)
+trans<-matrix(0,nrt,nc)
+for (i in 1:nrt){
+trans[i,]<-score.transform(data[i,], mu.new = 0, sd.new = 1, normalize =FALSE)$new.scores}
+write.table(trans,file="trans97.txt",sep="\t")
