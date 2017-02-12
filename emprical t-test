@@ -1,0 +1,15 @@
+library(limma)
+eset<- read.table("AD.txt", header=T,sep="\t")
+row.names(eset)<-eset[,1]
+eset<-eset[,-1]
+design <- model.matrix(~ 0+factor(c(rep(1,29),rep(2,29))))
+colnames(design) <- c("group1", "group2")
+cont.matrix <- makeContrasts(STvsCO=group1-group2, levels=design)
+##Correlation Between Duplicates
+cor<- duplicateCorrelation(eset)$ cor
+##lmFit(object, design=NULL, ndups=1, spacing=1, block=NULL, correlation, weights=NULL,method="ls", ...)
+fit <- lmFit(eset, design,-0.6847)
+fit2 <- contrasts.fit(fit, cont.matrix)
+fit2 <- eBayes(fit2)
+res<-topTable(fit2,number = 822, adjust = "fdr")
+write.table(res,file = "res AD.txt",sep="\t")
