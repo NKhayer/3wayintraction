@@ -1,0 +1,25 @@
+setwd("C:/users/nasibe/desktop/nd")
+library(igraph)
+data<- read.table("data.txt",sep="\t",header=T)
+data<- as.matrix(data)
+nrt <- nrow(data)
+write("Trip\t X3 ---> x1\t X3 ---> X2\t D1\t D2\t", file="result.txt",append =TRUE)
+K <- 1
+for (i in 1:nrt){
+  X1<-data[i,1]
+  X2<-data[i,2]
+  X3<- data[i,3]
+  el<- read.table("grn.txt",sep="\t",header=T)
+  el<- as.matrix(el)
+  g<-graph_from_edgelist(el, directed = TRUE)
+  sh1<-get.shortest.paths(g,X3,X1,mode="out")$vpath
+  sh2<-get.shortest.paths(g,X3,X2,mode="out")$vpath
+  res1<-unlist(sh1, recursive = TRUE, use.names = TRUE)
+  res2<-unlist(sh2, recursive = TRUE, use.names = TRUE)
+  
+  D1 <- distances(g,X3,X1,mode="out")
+  D2 <- distances(g,X3,X2,mode="out")
+  A <- paste(i,res1,res2,D1,D2,sep="\t")
+  write(A, file ="result.txt",append =TRUE)
+  K+1
+}
