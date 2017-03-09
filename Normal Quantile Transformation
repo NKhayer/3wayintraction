@@ -1,4 +1,4 @@
-trans<-read.table("trans97.txt", header=T, sep="\t")
+trans<-read.table("trans.txt", header=T, sep="\t")
 row.names(trans) <-trans[,1]
 trans <-trans[,-1]
 trans <- as.matrix(trans)
@@ -8,4 +8,4 @@ transq<-matrix(0,nrt,nc)
 for (i in 1:nrt){
   transq[i,]<- qnorm((rank(trans[i,]))/(nc+1))
  }
-write.table(transq,file="transq97.txt",sep="\t")
+write.table(transq,file="transq.txt",sep="\t")
